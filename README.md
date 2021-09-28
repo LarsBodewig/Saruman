@@ -1,5 +1,5 @@
-# Template
+# Steam Achievement Remote Unlock Mojo And eNforcer
 
-Template to include license information and useful files in all projects
+Maven plugin and implementation to unlock Steam achievements via steamworks4j.
 
 Run `git config --add include.path ../.gitconfig` to include the template config in your project config.
