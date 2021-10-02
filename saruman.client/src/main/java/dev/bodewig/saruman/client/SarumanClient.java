@@ -10,7 +10,7 @@ import javax.crypto.Cipher;
 
 import com.codedisaster.steamworks.SteamUserStats;
 
-public class Saruman {
+public class SarumanClient {
 	private static final String DEFAULT_KEY_PATH = "saruman_public.key";
 
 	private final SteamUserStats userStats;
@@ -43,11 +43,11 @@ public class Saruman {
 		userStats.setAchievement(name);
 	}
 
-	public Saruman(SteamUserStats userStats) throws ReadKeyException {
+	public SarumanClient(SteamUserStats userStats) throws ReadKeyException {
 		this(userStats, DEFAULT_KEY_PATH);
 	}
 
-	public Saruman(SteamUserStats userStats, String keyPath) throws ReadKeyException {
+	public SarumanClient(SteamUserStats userStats, String keyPath) throws ReadKeyException {
 		if (userStats == null) {
 			throw new IllegalArgumentException("User stats cannot be null");
 		}
@@ -65,7 +65,7 @@ public class Saruman {
 
 	private static PublicKey readPublicKey(String path) throws ReadKeyException {
 		try {
-			InputStream stream = Saruman.class.getClassLoader().getResourceAsStream(path);
+			InputStream stream = SarumanClient.class.getClassLoader().getResourceAsStream(path);
 			byte[] keyBytes = stream.readAllBytes();
 			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");

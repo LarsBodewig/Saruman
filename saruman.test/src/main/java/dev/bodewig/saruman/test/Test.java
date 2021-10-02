@@ -5,7 +5,7 @@ import com.codedisaster.steamworks.SteamUserStatsCallback;
 
 import dev.bodewig.saruman.client.DecryptionException;
 import dev.bodewig.saruman.client.ReadKeyException;
-import dev.bodewig.saruman.client.Saruman;
+import dev.bodewig.saruman.client.SarumanClient;
 import dev.bodewig.saruman.client.SteamUserStatsCallbackAdapter;
 
 public class Test {
@@ -13,9 +13,9 @@ public class Test {
 		SteamUserStatsCallback adapter = new SteamUserStatsCallbackAdapter();
 		SteamUserStats userStats = new SteamUserStats(adapter);
 
-		Saruman saruman;
+		SarumanClient saruman;
 		try {
-			saruman = new Saruman(userStats); // provide second argument for custom key file path
+			saruman = new SarumanClient(userStats); // provide second argument for custom key file path
 		} catch (ReadKeyException rke) {
 			// logic for missing key file
 			throw new RuntimeException(rke);
@@ -39,7 +39,7 @@ public class Test {
 
 		String code = "unlockCode";
 		try {
-			Saruman.unlockAchievement(userStats, code); // provide third argument for custom key file path
+			SarumanClient.unlockAchievement(userStats, code); // provide third argument for custom key file path
 		} catch (DecryptionException de) {
 			// logic for invalid code
 			throw new RuntimeException(de);
@@ -49,6 +49,6 @@ public class Test {
 		}
 
 		String name = "achievementName";
-		Saruman.lockAchievement(userStats, name);
+		SarumanClient.lockAchievement(userStats, name);
 	}
 }
