@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>dev.bodewig</groupId>
+		<artifactId>saruman</artifactId>
+		<version>0.1</version>
+	</parent>
+
+	<artifactId>saruman.test</artifactId>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>dev.bodewig</groupId>
+			<artifactId>saruman.client</artifactId>
+			<version>0.1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>14</release>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>dev.bodewig</groupId>
+				<artifactId>saruman.keygen</artifactId>
+				<version>0.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-keys</goal>
+						</goals>
+						<configuration>
+							<!-- The plugin can be configured. The default values are: -->
+							<outputDirectoryPublic>${project.build.directory}</outputDirectoryPublic>
+							<outputDirectoryPrivate>${project.basedir}</outputDirectoryPrivate>
+							<outputFileNamePublic>saruman_public.key</outputFileNamePublic>
+							<outputFileNamePrivate>saruman_private.key</outputFileNamePrivate>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>dev.bodewig</groupId>
+										<artifactId>
+											saruman.keygen
+										</artifactId>
+										<versionRange>
+											[0.1,)
+										</versionRange>
+										<goals>
+											<goal>generate-keys</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
