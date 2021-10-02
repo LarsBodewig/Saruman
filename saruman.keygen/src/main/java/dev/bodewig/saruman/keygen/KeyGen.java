@@ -20,9 +20,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "generate-keys", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class KeyGen extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", property = "outputDirectoryPublic", required = true)
+	@Parameter(defaultValue = "${project.build.resources[0].directory}", property = "outputDirectoryPublic", required = true)
 	private File outputDirectoryPublic;
-	@Parameter(defaultValue = "${project.basedir}", property = "outputDirectoryPrivate", required = true)
+	@Parameter(defaultValue = "${project.build.resources[0].directory}", property = "outputDirectoryPrivate", required = true)
 	private File outputDirectoryPrivate;
 	@Parameter(defaultValue = "saruman_public.key", property = "outputFileNamePublic", required = true)
 	private String outputFileNamePublic;

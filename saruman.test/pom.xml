@@ -44,8 +44,8 @@
 						</goals>
 						<configuration>
 							<!-- The plugin can be configured. The default values are: -->
-							<outputDirectoryPublic>${project.build.directory}</outputDirectoryPublic>
-							<outputDirectoryPrivate>${project.basedir}</outputDirectoryPrivate>
+							<outputDirectoryPublic>${project.build.resources[0].directory}</outputDirectoryPublic>
+							<outputDirectoryPrivate>${project.build.resources[0].directory}</outputDirectoryPrivate>
 							<outputFileNamePublic>saruman_public.key</outputFileNamePublic>
 							<outputFileNamePrivate>saruman_private.key</outputFileNamePrivate>
 						</configuration>

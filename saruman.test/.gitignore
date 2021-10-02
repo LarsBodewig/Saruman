@@ -1,3 +1,4 @@
 .settings/
 target/
-saruman_private.key
+src/main/resources/saruman_public.key
+src/main/resources/saruman_private.key

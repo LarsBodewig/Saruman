@@ -7,7 +7,12 @@ import dev.bodewig.saruman.server.ReadKeyException;
 import dev.bodewig.saruman.server.SarumanServer;
 
 public class Server {
-	public static void staticContext(String[] args) {
+	
+	public static void main(String[] args) {
+		staticContext();
+	}
+
+	public static void staticContext() {
 		SteamID userId = new SteamID();
 		String name = "achievementName";
 

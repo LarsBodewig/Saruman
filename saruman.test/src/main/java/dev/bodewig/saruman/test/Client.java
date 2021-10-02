@@ -10,7 +10,13 @@ import dev.bodewig.saruman.client.SarumanClient;
 import dev.bodewig.saruman.client.SteamUserStatsCallbackAdapter;
 
 public class Client {
-	public static void objectContext(String[] args) {
+
+	public static void main(String[] args) {
+		objectContext();
+		staticContext();
+	}
+
+	public static void objectContext() {
 		SteamUserStatsCallback adapter = new SteamUserStatsCallbackAdapter();
 		SteamUserStats userStats = new SteamUserStats(adapter);
 		SteamID userId = new SteamID();
