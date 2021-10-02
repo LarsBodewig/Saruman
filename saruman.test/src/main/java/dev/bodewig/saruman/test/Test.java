@@ -1,5 +1,6 @@
 package dev.bodewig.saruman.test;
 
+import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamUserStats;
 import com.codedisaster.steamworks.SteamUserStatsCallback;
 
@@ -12,10 +13,11 @@ public class Test {
 	public static void objectContext(String[] args) {
 		SteamUserStatsCallback adapter = new SteamUserStatsCallbackAdapter();
 		SteamUserStats userStats = new SteamUserStats(adapter);
+		SteamID userId = new SteamID();
 
 		SarumanClient saruman;
 		try {
-			saruman = new SarumanClient(userStats); // provide second argument for custom key file path
+			saruman = new SarumanClient(userId, userStats); // additional argument for custom key file path
 		} catch (ReadKeyException rke) {
 			// logic for missing key file
 			throw new RuntimeException(rke);
@@ -36,10 +38,11 @@ public class Test {
 	public static void staticContext() {
 		SteamUserStatsCallback adapter = new SteamUserStatsCallbackAdapter();
 		SteamUserStats userStats = new SteamUserStats(adapter);
+		SteamID userId = new SteamID();
 
 		String code = "unlockCode";
 		try {
-			SarumanClient.unlockAchievement(userStats, code); // provide third argument for custom key file path
+			SarumanClient.unlockAchievement(userId, userStats, code); // additional argument for custom key file path
 		} catch (DecryptionException de) {
 			// logic for invalid code
 			throw new RuntimeException(de);

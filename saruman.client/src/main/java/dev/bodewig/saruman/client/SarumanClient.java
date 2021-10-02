@@ -8,23 +8,27 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
+import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamUserStats;
 
 public class SarumanClient {
-	private static final String DEFAULT_KEY_PATH = "saruman_public.key";
+	private static final String DATA_SEPARATOR = "~>";
+
+	public static final String DEFAULT_KEY_PATH = "saruman_public.key";
 
 	private final SteamUserStats userStats;
 	private final PublicKey publicKey;
+	private final SteamID userId;
 
-	public static void unlockAchievement(SteamUserStats userStats, String code, String path)
+	public static void unlockAchievement(SteamID userId, SteamUserStats userStats, String code, String path)
 			throws DecryptionException, ReadKeyException {
 		PublicKey publicKey = readPublicKey(path);
-		unlockAchievement(userStats, code, publicKey);
+		unlockAchievement(userId, userStats, code, publicKey);
 	}
 
-	public static void unlockAchievement(SteamUserStats userStats, String code)
+	public static void unlockAchievement(SteamID userId, SteamUserStats userStats, String code)
 			throws DecryptionException, ReadKeyException {
-		unlockAchievement(userStats, code, DEFAULT_KEY_PATH);
+		unlockAchievement(userId, userStats, code, DEFAULT_KEY_PATH);
 	}
 
 	public static void lockAchievement(SteamUserStats userStats, String name) {
@@ -34,29 +38,21 @@ public class SarumanClient {
 		userStats.clearAchievement(name);
 	}
 
-	private static void unlockAchievement(SteamUserStats userStats, String code, PublicKey publicKey)
-			throws DecryptionException {
+	public SarumanClient(SteamID id, SteamUserStats userStats) throws ReadKeyException {
+		this(id, userStats, DEFAULT_KEY_PATH);
+	}
+
+	public SarumanClient(SteamID userId, SteamUserStats userStats, String keyPath) throws ReadKeyException {
 		if (userStats == null) {
 			throw new IllegalArgumentException("User stats cannot be null");
 		}
-		String name = decryptAchievement(code, publicKey);
-		userStats.setAchievement(name);
-	}
-
-	public SarumanClient(SteamUserStats userStats) throws ReadKeyException {
-		this(userStats, DEFAULT_KEY_PATH);
-	}
-
-	public SarumanClient(SteamUserStats userStats, String keyPath) throws ReadKeyException {
-		if (userStats == null) {
-			throw new IllegalArgumentException("User stats cannot be null");
-		}
+		this.userId = userId;
 		this.userStats = userStats;
 		this.publicKey = readPublicKey(keyPath);
 	}
 
 	public void unlockAchievement(String code) throws DecryptionException {
-		unlockAchievement(this.userStats, code, this.publicKey);
+		unlockAchievement(this.userId, this.userStats, code, this.publicKey);
 	}
 
 	public void lockAchievement(String name) {
@@ -75,6 +71,16 @@ public class SarumanClient {
 		}
 	}
 
+	private static void unlockAchievement(SteamID userId, SteamUserStats userStats, String code, PublicKey publicKey)
+			throws DecryptionException {
+		if (userStats == null) {
+			throw new IllegalArgumentException("User stats cannot be null");
+		}
+		String data = decryptAchievement(code, publicKey);
+		String name = getAchievementNameFromCode(userId, data);
+		userStats.setAchievement(name);
+	}
+
 	private static String decryptAchievement(String code, PublicKey publicKey) throws DecryptionException {
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -85,5 +91,18 @@ public class SarumanClient {
 		} catch (Exception e) {
 			throw new DecryptionException(e);
 		}
+	}
+
+	private static String getAchievementNameFromCode(SteamID userId, String data) throws DecryptionException {
+		String idPrefix = String.valueOf(userId.getAccountID()) + DATA_SEPARATOR;
+		int nameIndex;
+		if (data.startsWith(idPrefix)) { // user specific unlock code
+			nameIndex = idPrefix.length();
+		} else if (data.startsWith(DATA_SEPARATOR)) { // general unlock code for all accounts
+			nameIndex = DATA_SEPARATOR.length();
+		} else {
+			throw new DecryptionException("Code is invalid for this account id");
+		}
+		return data.substring(nameIndex);
 	}
 }
