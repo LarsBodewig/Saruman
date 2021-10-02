@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>saruman.keygen</module>
-		<module>saruman.api</module>
+		<module>saruman.client</module>
+		<module>saruman.test</module>
 	</modules>
 </project>
