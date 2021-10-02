@@ -16,33 +16,36 @@ public class SarumanClient {
 
 	public static final String DEFAULT_KEY_PATH = "saruman_public.key";
 
+	private final SteamID userId;
 	private final SteamUserStats userStats;
 	private final PublicKey publicKey;
-	private final SteamID userId;
 
-	public static void unlockAchievement(SteamID userId, SteamUserStats userStats, String code, String path)
+	public static void unlockAchievement(SteamID userId, SteamUserStats userStats, String unlockCode, String keyPath)
 			throws DecryptionException, ReadKeyException {
-		PublicKey publicKey = readPublicKey(path);
-		unlockAchievement(userId, userStats, code, publicKey);
+		PublicKey publicKey = readPublicKey(keyPath);
+		unlockAchievement(userId, userStats, unlockCode, publicKey);
 	}
 
-	public static void unlockAchievement(SteamID userId, SteamUserStats userStats, String code)
+	public static void unlockAchievement(SteamID userId, SteamUserStats userStats, String unlockCode)
 			throws DecryptionException, ReadKeyException {
-		unlockAchievement(userId, userStats, code, DEFAULT_KEY_PATH);
+		unlockAchievement(userId, userStats, unlockCode, DEFAULT_KEY_PATH);
 	}
 
-	public static void lockAchievement(SteamUserStats userStats, String name) {
+	public static void lockAchievement(SteamUserStats userStats, String achievementName) {
 		if (userStats == null) {
 			throw new IllegalArgumentException("User stats cannot be null");
 		}
-		userStats.clearAchievement(name);
+		userStats.clearAchievement(achievementName);
 	}
 
-	public SarumanClient(SteamID id, SteamUserStats userStats) throws ReadKeyException {
-		this(id, userStats, DEFAULT_KEY_PATH);
+	public SarumanClient(SteamID userId, SteamUserStats userStats) throws ReadKeyException {
+		this(userId, userStats, DEFAULT_KEY_PATH);
 	}
 
 	public SarumanClient(SteamID userId, SteamUserStats userStats, String keyPath) throws ReadKeyException {
+		if (userId == null) {
+			throw new IllegalArgumentException("User id cannot be null");
+		}
 		if (userStats == null) {
 			throw new IllegalArgumentException("User stats cannot be null");
 		}
@@ -51,17 +54,17 @@ public class SarumanClient {
 		this.publicKey = readPublicKey(keyPath);
 	}
 
-	public void unlockAchievement(String code) throws DecryptionException {
-		unlockAchievement(this.userId, this.userStats, code, this.publicKey);
+	public void unlockAchievement(String unlockCode) throws DecryptionException {
+		unlockAchievement(this.userId, this.userStats, unlockCode, this.publicKey);
 	}
 
-	public void lockAchievement(String name) {
-		lockAchievement(this.userStats, name);
+	public void lockAchievement(String achievementName) {
+		lockAchievement(this.userStats, achievementName);
 	}
 
-	private static PublicKey readPublicKey(String path) throws ReadKeyException {
+	private static PublicKey readPublicKey(String keyPath) throws ReadKeyException {
 		try {
-			InputStream stream = SarumanClient.class.getClassLoader().getResourceAsStream(path);
+			InputStream stream = SarumanClient.class.getClassLoader().getResourceAsStream(keyPath);
 			byte[] keyBytes = stream.readAllBytes();
 			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -71,21 +74,24 @@ public class SarumanClient {
 		}
 	}
 
-	private static void unlockAchievement(SteamID userId, SteamUserStats userStats, String code, PublicKey publicKey)
-			throws DecryptionException {
+	private static void unlockAchievement(SteamID userId, SteamUserStats userStats, String unlockCode,
+			PublicKey publicKey) throws DecryptionException {
+		if (userId == null) {
+			throw new IllegalArgumentException("User id cannot be null");
+		}
 		if (userStats == null) {
 			throw new IllegalArgumentException("User stats cannot be null");
 		}
-		String data = decryptAchievement(code, publicKey);
+		String data = decryptCode(unlockCode, publicKey);
 		String name = getAchievementNameFromCode(userId, data);
 		userStats.setAchievement(name);
 	}
 
-	private static String decryptAchievement(String code, PublicKey publicKey) throws DecryptionException {
+	private static String decryptCode(String unlockCode, PublicKey publicKey) throws DecryptionException {
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, publicKey);
-			byte[] encryptedBytes = code.getBytes(StandardCharsets.UTF_8);
+			byte[] encryptedBytes = unlockCode.getBytes(StandardCharsets.UTF_8);
 			byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
 			return new String(decryptedBytes, StandardCharsets.UTF_8);
 		} catch (Exception e) {

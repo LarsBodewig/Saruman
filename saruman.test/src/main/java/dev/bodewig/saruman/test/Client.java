@@ -9,7 +9,7 @@ import dev.bodewig.saruman.client.ReadKeyException;
 import dev.bodewig.saruman.client.SarumanClient;
 import dev.bodewig.saruman.client.SteamUserStatsCallbackAdapter;
 
-public class Test {
+public class Client {
 	public static void objectContext(String[] args) {
 		SteamUserStatsCallback adapter = new SteamUserStatsCallbackAdapter();
 		SteamUserStats userStats = new SteamUserStats(adapter);
