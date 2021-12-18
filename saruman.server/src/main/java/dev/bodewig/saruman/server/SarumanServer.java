@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.security.auth.DestroyFailedException;
@@ -62,7 +63,7 @@ public class SarumanServer {
 			cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 			byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
 			byte[] encryptedBytes = cipher.doFinal(dataBytes);
-			return new String(encryptedBytes, StandardCharsets.UTF_8);
+			return Base64.getEncoder().encodeToString(encryptedBytes);
 		} catch (Exception e) {
 			throw new EncryptionException(e);
 		} finally {

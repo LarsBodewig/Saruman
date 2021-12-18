@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 
@@ -91,8 +92,8 @@ public class SarumanClient {
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, publicKey);
-			byte[] encryptedBytes = unlockCode.getBytes(StandardCharsets.UTF_8);
-			byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+			byte[] decodedBytes = Base64.getDecoder().decode(unlockCode);
+			byte[] decryptedBytes = cipher.doFinal(decodedBytes);
 			return new String(decryptedBytes, StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			throw new DecryptionException(e);
